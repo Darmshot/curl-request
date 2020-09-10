@@ -1,0 +1,13 @@
+{
+    "name": "darmshot/curl-request",
+    "description": "Helper curl",
+    "type": "library",
+    "license": "mit",
+    "authors": [
+        {
+            "name": "stanislav",
+            "email": "darmshot@gmail.com"
+        }
+    ],
+    "require": {}
+}
