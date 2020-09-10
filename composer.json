@@ -9,5 +9,6 @@
             "email": "darmshot@gmail.com"
         }
     ],
-    "require": {}
+  "minimum-stability": "stable",
+  "require": {}
 }
