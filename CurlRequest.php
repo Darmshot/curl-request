@@ -1,9 +1,7 @@
 <?php
 
-namespace YoutrackLocalServer\Extension;
-/**
- * test 3
- */
+namespace CurlRequest;
+
 use Exception;
 
 class CurlRequest
