@@ -1,6 +1,6 @@
 <?php
 
-namespace CurlRequest;
+namespace Darmshot\CurlRequest;
 
 use Exception;
 
