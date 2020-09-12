@@ -47,37 +47,26 @@ class CurlRequest
 	 * @var int
 	 */
 	private $timeOut = 20;
+	/**
+	 * @var bool
+	 */
+	private $httpBuildQuery;
 
-	private $options = [];
 
 	public function __construct()
 	{
+
 	}
 
 	public function setUrl(string $url)
 	{
-		$this->options[CURLOPT_URL] = $url;
-		$this->url                  = $url;
+		$this->url = $url;
 	}
 
-	public function setReturnTransfer(bool $bool = true)
+	public function setPostFields(array $postFields, bool $httpBuildQuery = true)
 	{
-		$this->options[CURLOPT_RETURNTRANSFER] = $bool;
-	}
-
-	public function setEncoding(string $encoding = '')
-	{
-		$this->options[CURLOPT_ENCODING] = $encoding;
-	}
-
-	protected function setHeaderFunction()
-	{
-		$this->options[CURLOPT_HEADERFUNCTION] = array(&$this, 'handleHeaderLine');
-	}
-
-	public function setPostFields(array $postFields)
-	{
-		$this->postFields = $postFields;
+		$this->postFields     = $postFields;
+		$this->httpBuildQuery = $httpBuildQuery;
 	}
 
 	public function setProxy($proxy)
@@ -85,30 +74,9 @@ class CurlRequest
 		$this->proxy = $proxy;
 	}
 
-	public function setSSLVerifypeer(bool $bool = false)
+	public function setSSL(bool $bool = false)
 	{
-		$this->ssl                             = $bool;
-		$this->options[CURLOPT_SSL_VERIFYPEER] = $bool;
-	}
-
-	/**
-	 * @return array|bool
-	 */
-	private function compileHeader()
-	{
-		$this->headers;
-
-		if ($this->cookie) {
-			$this->headers['cookie'] = 'cookie: ' . $this->cookie;
-		}
-
-		if ($this->userAgent) {
-			$this->headers['user-agent'] = 'user-agent: ' . $this->userAgent;
-		}
-
-//		var_dump($this->headers);
-
-		return ($this->headers) ? $this->headers : false;
+		$this->ssl = $bool;
 	}
 
 	/**
@@ -116,27 +84,17 @@ class CurlRequest
 	 */
 	public function setHeaders(array $headers)
 	{
-		$this->headers = array_merge($this->headers, array_change_key_case($headers));
-
-		if ($this->headers) {
-			$this->options[CURLOPT_HTTPHEADER] = $this->headers;
-		}
-
+		$this->headers = $headers;
 	}
 
 	/**
 	 * @param string $userAgent
 	 */
-	public function setUserAgent(string $userAgent = null)
+	public function setUserAgent(string $userAgent)
 	{
 		if ($userAgent) {
 			$this->userAgent = $userAgent;
 		}
-
-		$this->headers = array_merge($this->headers, array_change_key_case($headers));
-
-		$options[CURLOPT_USERAGENT] = $userAgent;
-
 	}
 
 	public function setFilenameCookies($filenameCookie)
@@ -146,18 +104,6 @@ class CurlRequest
 		} elseif ($filenameCookie) {
 			var_dump('$filenameCookie is not file!');
 		}
-	}
-
-	public function setMethod(string $method = 'get')
-	{
-		$this->method = $method;
-	}
-
-	public function setTimeOut(int $seconds = 20)
-	{
-		$this->timeOut                  = $seconds;
-		$this->options[CURLOPT_TIMEOUT] = $seconds;
-
 	}
 
 
@@ -233,13 +179,31 @@ class CurlRequest
 		}
 
 		if ($this->method == 'post' && $this->postFields) {
-//			$options[CURLOPT_POSTFIELDS] = http_build_query($this->postFields);
-			$options[CURLOPT_POSTFIELDS] = $this->postFields;
+			$options[CURLOPT_POSTFIELDS] = ($this->httpBuildQuery) ? http_build_query($this->postFields) : $this->postFields;
 		}
 
 		return $options;
 	}
 
+	/**
+	 * @return array|bool
+	 */
+	private function compileHeader()
+	{
+		$this->headers;
+
+		if ($this->cookie) {
+			$this->headers['cookie'] = 'cookie: ' . $this->cookie;
+		}
+
+		if ($this->userAgent) {
+			$this->headers['user-agent'] = 'user-agent: ' . $this->userAgent;
+		}
+
+//		var_dump($this->headers);
+
+		return ($this->headers) ? $this->headers : false;
+	}
 
 	private function curl()
 	{
@@ -361,6 +325,15 @@ class CurlRequest
 		return $this->userAgent;
 	}
 
+	public function setMethod(string $method = 'get')
+	{
+		$this->method = $method;
+	}
+
+	public function setTimeOut(int $seconds = 20)
+	{
+		$this->timeOut = $seconds;
+	}
 
 	private function handleHeaderLine($curl, $header_line)
 	{
