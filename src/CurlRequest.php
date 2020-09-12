@@ -288,7 +288,6 @@ class CurlRequest
 	{
 		if ($this->filenameCookie) {
 			$cookies = $this->parseCookie($this->headerLines);
-//			var_dump(array('parseCooke' => $cookies));
 			$this->updateCookieFile($cookies);
 		}
 	}
